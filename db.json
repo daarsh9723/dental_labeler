@@ -1,0 +1,185 @@
+{
+    "current_image": "images/thumbnail_19804dogital ceph.jpg",
+    "data": {
+        "images/thumbnail_19804dogital ceph.jpg": {
+            "active_class": "gonion",
+            "classes": [
+                {
+                    "name": "gonion",
+                    "first_line": false,
+                    "second_line": false,
+                    "third_mouse_click": false,
+                    "bisector": false,
+                    "bisector_draw": false,
+                    "color": "orange",
+                    "gonion_point": false
+                },
+                {
+                    "name": "second_class",
+                    "color": "blue",
+                    "pos": {
+                        "x": 439,
+                        "y": 254,
+                        "__point__": true
+                    }
+                },
+                {
+                    "name": "third_class",
+                    "color": "green",
+                    "pos": {
+                        "x": 664,
+                        "y": 196,
+                        "__point__": true
+                    }
+                },
+                {
+                    "name": "fourth_class",
+                    "color": "red",
+                    "pos": {
+                        "x": 682,
+                        "y": 388,
+                        "__point__": true
+                    }
+                }
+            ]
+        },
+        "images/TAMARA^_ZAYED_001 (2).jpg": {
+            "active_class": "gonion",
+            "classes": [
+                {
+                    "name": "gonion",
+                    "first_line": [
+                        {
+                            "x": 518,
+                            "y": 726,
+                            "__point__": true
+                        },
+                        {
+                            "x": 404,
+                            "y": 544,
+                            "__point__": true
+                        }
+                    ],
+                    "second_line": [
+                        {
+                            "x": 410,
+                            "y": 526,
+                            "__point__": true
+                        },
+                        {
+                            "x": 463,
+                            "y": 446,
+                            "__point__": true
+                        }
+                    ],
+                    "third_mouse_click": {
+                        "x": 537,
+                        "y": 658,
+                        "__point__": true
+                    },
+                    "bisector": [
+                        -361.03106692199344,
+                        -4.608081835820627,
+                        147302.58848365894
+                    ],
+                    "bisector_draw": false,
+                    "color": "orange",
+                    "gonion_point": [
+                        537,
+                        -10106.394832538377
+                    ]
+                },
+                {
+                    "name": "second_class",
+                    "color": "blue",
+                    "pos": {
+                        "x": 426,
+                        "y": 687,
+                        "__point__": true
+                    }
+                },
+                {
+                    "name": "third_class",
+                    "color": "green",
+                    "pos": {
+                        "x": 653,
+                        "y": 577,
+                        "__point__": true
+                    }
+                },
+                {
+                    "name": "fourth_class",
+                    "color": "red",
+                    "pos": {
+                        "x": 560,
+                        "y": 649,
+                        "__point__": true
+                    }
+                }
+            ]
+        },
+        "images/24399digital ceph.jpg": {
+            "active_class": "gonion",
+            "classes": [
+                {
+                    "name": "gonion",
+                    "first_line": [
+                        {
+                            "x": 264,
+                            "y": 502,
+                            "__point__": true
+                        },
+                        {
+                            "x": 287,
+                            "y": 359,
+                            "__point__": true
+                        }
+                    ],
+                    "second_line": [
+                        {
+                            "x": 626,
+                            "y": 753,
+                            "__point__": true
+                        },
+                        {
+                            "x": 267,
+                            "y": 499,
+                            "__point__": true
+                        }
+                    ],
+                    "third_mouse_click": {
+                        "x": 410,
+                        "y": 509,
+                        "__point__": true
+                    },
+                    "bisector": [
+                        -59.34519510202142,
+                        -141.23651558415082,
+                        85962.18836873097
+                    ],
+                    "bisector_draw": false,
+                    "color": "orange",
+                    "gonion_point": [
+                        410,
+                        436.3649026740661
+                    ]
+                },
+                {
+                    "name": "second_class",
+                    "color": "blue",
+                    "pos": false
+                },
+                {
+                    "name": "third_class",
+                    "color": "green",
+                    "pos": false
+                },
+                {
+                    "name": "fourth_class",
+                    "color": "red",
+                    "pos": false
+                }
+            ]
+        }
+    }
+}
