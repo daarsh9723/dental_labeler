@@ -168,6 +168,16 @@ def get_circle_loc_on_bisector(event, x, y, c):
     y_pos = -(event_x*x + c)/y
     return event_x,y_pos
 
+def leftKey(event):
+    global left_key_func
+    if left_key_func != None:
+        left_key_func(event)
+
+def rightKey(event):
+    global right_key_func
+    if right_key_func != None:
+        right_key_func(event)
+
 def create_canvas(image):
     global root
     canvas = Canvas(root, width=MAX_SIZE, height =MAX_SIZE )
@@ -178,6 +188,8 @@ def create_canvas(image):
     canvas.bind("<Button-1>", on_button_1_clicked)
     canvas.bind('<Motion>', draw_hover_circle)
     canvas.bind('<Enter>', draw_hover_circle) 
+    root.bind('<Left>', leftKey)
+    root.bind('<Right>', rightKey)
     root.bind('<Key>', key_pressed)
     return canvas
 
@@ -186,6 +198,9 @@ def key_pressed(event):
     global label_active_class
     if event.char == 'r':
         reset_state_full()
+        return
+    if event.char == 'c':
+        reset_state_part()
         return
     try:
         if int(event.char) in list(range(1,len(state['classes'])+1)):
@@ -279,12 +294,17 @@ def forward(img_path):
 
 def create_forward_button(img_path):
     global button_forward
+    global right_key_func
     if img_paths.index(img_path) == len(img_paths)-1:
         button_forward = Button(root, text="Forward",
                                 state=DISABLED)
+        right_key_func = lambda event: None
     else:
         button_forward = Button(root, text="forward",
                         command=lambda: forward(img_paths[img_paths.index(img_path)+1]))
+        right_key_func = lambda event: forward(img_paths[img_paths.index(img_path)+1])
+
+    
 
 def back(img_path):
 
@@ -320,12 +340,14 @@ def back(img_path):
 
 def create_back_button(img_path):
     global button_back
+    global left_key_func
+
     if img_paths.index(img_path) == 0:
         button_back = Button(root, text="Back", state=DISABLED)
+        left_key_func = lambda event: None
     else:
         button_back = Button(root, text="Back",command=lambda: back(img_paths[img_paths.index(img_path)-1]))
-    
- 
+        left_key_func = lambda event: back(img_paths[img_paths.index(img_path)-1])
 
 def main():
     global root
@@ -342,6 +364,8 @@ def main():
     global label_active_class
     global current_image
     global current_image_path
+    global left_key_func
+    global right_key_func
 
     img_paths = glob.glob("images/*.jpg")
 
@@ -354,11 +378,11 @@ def main():
             "data":{}
         }
         json.dump(db, open('db.json', 'w'),indent=4)
-    current_image_path = db['current_image']
+    current_image_path = db['current_image'] if db['current_image'] in img_paths else img_paths[0]
     current_image = create_image_from_path(current_image_path)
     canvas = create_canvas(current_image)
     label_active_class = None
-    reset_state_full()
+    load_state(current_image_path)
 
 
     create_forward_button(current_image_path)

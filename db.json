@@ -17,29 +17,17 @@
                 {
                     "name": "second_class",
                     "color": "blue",
-                    "pos": {
-                        "x": 439,
-                        "y": 254,
-                        "__point__": true
-                    }
+                    "pos": false
                 },
                 {
                     "name": "third_class",
                     "color": "green",
-                    "pos": {
-                        "x": 664,
-                        "y": 196,
-                        "__point__": true
-                    }
+                    "pos": false
                 },
                 {
                     "name": "fourth_class",
                     "color": "red",
-                    "pos": {
-                        "x": 682,
-                        "y": 388,
-                        "__point__": true
-                    }
+                    "pos": false
                 }
             ]
         },
@@ -50,71 +38,63 @@
                     "name": "gonion",
                     "first_line": [
                         {
-                            "x": 518,
-                            "y": 726,
+                            "x": 580,
+                            "y": 682,
                             "__point__": true
                         },
                         {
-                            "x": 404,
-                            "y": 544,
+                            "x": 441,
+                            "y": 656,
                             "__point__": true
                         }
                     ],
                     "second_line": [
                         {
-                            "x": 410,
-                            "y": 526,
+                            "x": 416,
+                            "y": 566,
                             "__point__": true
                         },
                         {
-                            "x": 463,
-                            "y": 446,
+                            "x": 447,
+                            "y": 285,
                             "__point__": true
                         }
                     ],
                     "third_mouse_click": {
-                        "x": 537,
-                        "y": 658,
+                        "x": 487,
+                        "y": 602,
                         "__point__": true
                     },
                     "bisector": [
-                        -361.03106692199344,
-                        -4.608081835820627,
-                        147302.58848365894
+                        114.55800084061491,
+                        154.50639866924934,
+                        -146966.74999649092
                     ],
                     "bisector_draw": false,
                     "color": "orange",
                     "gonion_point": [
-                        537,
-                        -10106.394832538377
+                        487,
+                        590.1179781058347
                     ]
                 },
                 {
                     "name": "second_class",
                     "color": "blue",
                     "pos": {
-                        "x": 426,
-                        "y": 687,
+                        "x": 509,
+                        "y": 634,
                         "__point__": true
                     }
                 },
                 {
                     "name": "third_class",
                     "color": "green",
-                    "pos": {
-                        "x": 653,
-                        "y": 577,
-                        "__point__": true
-                    }
+                    "pos": false
                 },
                 {
                     "name": "fourth_class",
                     "color": "red",
-                    "pos": {
-                        "x": 560,
-                        "y": 649,
-                        "__point__": true
-                    }
+                    "pos": false
                 }
             ]
         },
@@ -123,51 +103,22 @@
             "classes": [
                 {
                     "name": "gonion",
-                    "first_line": [
-                        {
-                            "x": 264,
-                            "y": 502,
-                            "__point__": true
-                        },
-                        {
-                            "x": 287,
-                            "y": 359,
-                            "__point__": true
-                        }
-                    ],
-                    "second_line": [
-                        {
-                            "x": 626,
-                            "y": 753,
-                            "__point__": true
-                        },
-                        {
-                            "x": 267,
-                            "y": 499,
-                            "__point__": true
-                        }
-                    ],
-                    "third_mouse_click": {
-                        "x": 410,
-                        "y": 509,
-                        "__point__": true
-                    },
-                    "bisector": [
-                        -59.34519510202142,
-                        -141.23651558415082,
-                        85962.18836873097
-                    ],
+                    "first_line": false,
+                    "second_line": false,
+                    "third_mouse_click": false,
+                    "bisector": false,
                     "bisector_draw": false,
                     "color": "orange",
-                    "gonion_point": [
-                        410,
-                        436.3649026740661
-                    ]
+                    "gonion_point": false
                 },
                 {
                     "name": "second_class",
                     "color": "blue",
-                    "pos": false
+                    "pos": {
+                        "x": 416,
+                        "y": 578,
+                        "__point__": true
+                    }
                 },
                 {
                     "name": "third_class",
