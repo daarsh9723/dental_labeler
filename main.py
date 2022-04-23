@@ -404,7 +404,7 @@ def create_image_from_path(image):
     im =ImageTk.PhotoImage(pil_im)
     return im
 
-MAX_SIZE = 900
+MAX_SIZE = 800
 
 state_default = {
     'active_class': 'gonion',

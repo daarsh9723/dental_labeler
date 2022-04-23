@@ -32,59 +32,22 @@
             ]
         },
         "images/TAMARA^_ZAYED_001 (2).jpg": {
-            "active_class": "gonion",
+            "active_class": "second_class",
             "classes": [
                 {
                     "name": "gonion",
-                    "first_line": [
-                        {
-                            "x": 580,
-                            "y": 682,
-                            "__point__": true
-                        },
-                        {
-                            "x": 441,
-                            "y": 656,
-                            "__point__": true
-                        }
-                    ],
-                    "second_line": [
-                        {
-                            "x": 416,
-                            "y": 566,
-                            "__point__": true
-                        },
-                        {
-                            "x": 447,
-                            "y": 285,
-                            "__point__": true
-                        }
-                    ],
-                    "third_mouse_click": {
-                        "x": 487,
-                        "y": 602,
-                        "__point__": true
-                    },
-                    "bisector": [
-                        114.55800084061491,
-                        154.50639866924934,
-                        -146966.74999649092
-                    ],
+                    "first_line": false,
+                    "second_line": false,
+                    "third_mouse_click": false,
+                    "bisector": false,
                     "bisector_draw": false,
                     "color": "orange",
-                    "gonion_point": [
-                        487,
-                        590.1179781058347
-                    ]
+                    "gonion_point": false
                 },
                 {
                     "name": "second_class",
                     "color": "blue",
-                    "pos": {
-                        "x": 509,
-                        "y": 634,
-                        "__point__": true
-                    }
+                    "pos": false
                 },
                 {
                     "name": "third_class",
