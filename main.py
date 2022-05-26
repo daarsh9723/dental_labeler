@@ -12,6 +12,23 @@ from textwrap import indent
 from tkinter import *
 from PIL import ImageTk, Image
 
+class_name_shortcut = {
+        "s": "Sella",
+        "n": "Naison",
+        "a":"A-point",
+        "b":"B-point",
+        "ga":"Glabella",
+        "go":"Gonion",
+        "me":"Menton",
+        "po":"Porion",
+        "or":"Orbitale",
+        "u1i":"U1-inc",
+        "u1a":"U1-apex",#
+        "l1i":"L1-inc",
+        "l1a":"L1-apex",
+        "u6":"U6-mbc",#
+        "l6":"L6-mbc"
+}
 class EnhancedJSONEncoder(json.JSONEncoder):
         def default(self, o):
             if dataclasses.is_dataclass(o):
@@ -39,7 +56,7 @@ def reset_state_part():
 
     for i, state_class in enumerate(state['classes']):
         if state_class['name'] == state['active_class']:
-            if state_class['name'] != 'gonion':
+            if state_class['name'] != 'Gonion':
                 canvas.delete(state_class['name'])
             else:
                 canvas.delete('line')
@@ -49,7 +66,7 @@ def reset_state_part():
             state_class= copy.deepcopy(state_default['classes'][i])
             state['classes'][i] = state_class
 
-def create_circle(canvasName,x, y, r=3,tag = 'circle',color = 'black'): #center coordinates, radius
+def create_circle(canvasName,x, y, r=2,tag = 'circle',color = 'black'): #center coordinates, radius
     x0 = x - r
     y0 = y - r
     x1 = x + r
@@ -78,7 +95,7 @@ def on_button_1_clicked(tk_event):
     global canvas
 
     # print("Button 1 clicked",tk_event)
-    if state['active_class'] == 'gonion':
+    if state['active_class'] == 'Gonion':
         state_gonion = state['classes'][0]
         if state_gonion['first_line'] == False:
             state_gonion['first_line'] = [Point(tk_event.x,tk_event.y)]
@@ -145,7 +162,6 @@ def get_line_bisector_params(first_line, second_line,multiplier=1):
     return x,y,c
 
 
-
 def get_line_equation(x1, y1, x2, y2):
     a = y2 - y1
     b = x1 - x2
@@ -178,6 +194,16 @@ def rightKey(event):
     if right_key_func != None:
         right_key_func(event)
 
+def change_class_func(event,name):
+    print(name)
+    global state
+    global label_active_class
+
+    state['active_class'] = name
+    label_active_class.config(text=f"Active class: {state['active_class']}")
+    active_class = [state_class for state_class in state['classes'] if state_class['name'] == name][0]
+    label_active_class.config(fg=active_class['color'])
+
 def create_canvas(image):
     global root
     canvas = Canvas(root, width=MAX_SIZE, height =MAX_SIZE )
@@ -190,28 +216,47 @@ def create_canvas(image):
     canvas.bind('<Enter>', draw_hover_circle) 
     root.bind('<Left>', leftKey)
     root.bind('<Right>', rightKey)
-    root.bind('<Key>', key_pressed)
+    # root.bind('<Key>', key_pressed)
+    for k, v in class_name_shortcut.items():
+        root.bind(k, lambda event, name=v: change_class_func(event, name))
+
+    # root.bind("s",change_class_func)
+    # root.bind("n",change_class_func)
+    # root.bind("a",change_class_func)
+    # root.bind("b",change_class_func)
+    # root.bind("ga",change_class_func)
+    # root.bind("go",change_class_func)
+    # root.bind("me",change_class_func)
+    # root.bind("po",change_class_func)
+    # root.bind("or",change_class_func)
+    # root.bind("u1i",change_class_func)
+    # root.bind("u1a",change_class_func)
+    # root.bind("l1i",change_class_func)
+    # root.bind("l1a",change_class_func)
+    # root.bind("u6",change_class_func)
+    # root.bind("l6",change_class_func)
+
     return canvas
 
-def key_pressed(event):
-    global state
-    global label_active_class
-    if event.char == 'r':
-        reset_state_full()
-        return
-    if event.char == 'c':
-        reset_state_part()
-        return
-    try:
-        if int(event.char) in list(range(1,len(state['classes'])+1)):
-            state['active_class'] = state['classes'][int(event.char)-1]['name']
-            print(state['active_class'])
-        label_active_class.config(text=f"Active class: {state['active_class']}")
-        active_class = [state_class for state_class in state['classes'] if state_class['name'] == state['active_class']][0]
-        label_active_class.config(fg=active_class['color'])
-    except ValueError as e:
-        print(e)
-    return
+# def key_pressed(event):
+#     global state
+#     global label_active_class
+#     if event.char == 'r':
+#         # reset_state_full()
+#         return
+#     if event.char == 'c':
+#         reset_state_part()
+#         return
+#     try:
+#         if int(event.char) in list(range(1,len(state['classes'])+1)):
+#             state['active_class'] = state['classes'][int(event.char)-1]['name']
+#             print(state['active_class'])
+#         label_active_class.config(text=f"Active class: {state['active_class']}")
+#         active_class = [state_class for state_class in state['classes'] if state_class['name'] == state['active_class']][0]
+#         label_active_class.config(fg=active_class['color'])
+#     except ValueError as e:
+#         print(e)
+#     return
 
 def save_state(image_path,current_path):
     global state
@@ -240,7 +285,7 @@ def load_state(image_path):
         if image_path in db['data']:
             state = db['data'][image_path]
             for state_class in state['classes']:
-                if state_class['name'] == 'gonion':
+                if state_class['name'] == 'Gonion':
                     if state_class['first_line'] !=False:
                         line = state_class['first_line']
                         redraw_line(line)
@@ -285,7 +330,7 @@ def forward(img_path):
     create_back_button(img_path)
 
     active_class = [state_class for state_class in state['classes'] if state_class['name'] == state['active_class']][0]
-    label_active_class = Label(root, text=f"Active Class: {state['active_class']}",fg=active_class['color'])
+    label_active_class = Label(root, text=f"Active Class: {state['active_class']}",fg=active_class['color'],background='black')
 
     button_back.grid(row=5, column=0)
     button_clear.grid(row=5, column=1)
@@ -331,7 +376,7 @@ def back(img_path):
     create_back_button(img_path)
         
     active_class = [state_class for state_class in state['classes'] if state_class['name'] == state['active_class']][0]
-    label_active_class = Label(root, text=f"Active Class: {state['active_class']}",fg=active_class['color'])
+    label_active_class = Label(root, text=f"Active Class: {state['active_class']}",fg=active_class['color'],background='black')
 
     button_back.grid(row=5, column=0)
     button_clear.grid(row=5, column=1)
@@ -390,7 +435,7 @@ def main():
     button_clear = Button(root, text="Clear", command=reset_state_part)
 
     active_class = [state_class for state_class in state['classes'] if state_class['name'] == state['active_class']][0]
-    label_active_class = Label(root, text=f"Active Class: {state['active_class']}",fg=active_class['color'])
+    label_active_class = Label(root, text=f"Active Class: {state['active_class']}",fg=active_class['color'],background='black')
  
     button_back.grid(row=5, column=0)
     button_clear.grid(row=5, column=1)
@@ -406,11 +451,12 @@ def create_image_from_path(image):
 
 MAX_SIZE = 800
 
-state_default = {
-    'active_class': 'gonion',
+def make_state_default(class_name_shortcut):
+    state_default = {
+    'active_class': 'Gonion',
     'classes':[
         {
-            'name': 'gonion',
+            'name': 'Gonion',
             "first_line": False,
             "second_line": False,
             "third_mouse_click": False,
@@ -418,24 +464,27 @@ state_default = {
             'bisector_draw': False,
             'color': 'orange',
             'gonion_point': False,
-        },
-        {
-            'name': 'second_class',
-            'color': 'blue', 
-            'pos':False
-        },
-        {
-            'name': 'third_class',
-            'color': 'green',
-            'pos':False
-        },
-        {
-            'name': 'fourth_class',
-            'color': 'red',
-            'pos':False
         }
-    ]
-}
+        # ,
+        # {
+        #     'name': 'second_class',
+        #     'color': 'blue', 
+        #     'pos':False
+        # }
+        ]
+    }
+    colors = [ "red", "green", "SeaGreen", "cyan", "yellow", "magenta","HotPink1","BlueViolet","burlywood4","OrangeRed","goldenrod","DarkSlateGrey","MistyRose4","olive"]
+    c_dict = {k:v for k,v in class_name_shortcut.items() if v!= 'Gonion'}
+    for i, (k,v) in enumerate(c_dict.items()):
+        state_default['classes'].append({
+        'name': v,
+        'color': colors[i%len(colors)],
+        'pos':False
+    })
+    return state_default
+
+state_default = make_state_default(class_name_shortcut)
+
 def redraw_line(line):
     for line_event in line:
         create_circle(canvas,line_event.x,line_event.y)
