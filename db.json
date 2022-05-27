@@ -1,4 +1,378 @@
 {
-    "current_image": "images/thumbnail_19804dogital ceph.jpg",
-    "data": {}
+    "current_image": "images/24399digital ceph.jpg",
+    "data": {
+        "images/thumbnail_19804dogital ceph.jpg": {
+            "active_class": "Gonion",
+            "classes": [
+                {
+                    "name": "Gonion",
+                    "first_line": [
+                        {
+                            "x": 523,
+                            "y": 477,
+                            "__point__": true
+                        },
+                        {
+                            "x": 509,
+                            "y": 529,
+                            "__point__": true
+                        }
+                    ],
+                    "second_line": [
+                        {
+                            "x": 351,
+                            "y": 508,
+                            "__point__": true
+                        },
+                        {
+                            "x": 465,
+                            "y": 569,
+                            "__point__": true
+                        }
+                    ],
+                    "third_mouse_click": {
+                        "x": 543,
+                        "y": 571,
+                        "__point__": true
+                    },
+                    "bisector": [
+                        26.593217909779746,
+                        61.48152718500178,
+                        -49076.8352963136
+                    ],
+                    "bisector_draw": false,
+                    "color": "orange",
+                    "gonion_point": [
+                        543,
+                        563.3678855614489
+                    ]
+                },
+                {
+                    "name": "Sella",
+                    "color": "red",
+                    "pos": false
+                },
+                {
+                    "name": "Naison",
+                    "color": "green",
+                    "pos": false
+                },
+                {
+                    "name": "A-point",
+                    "color": "SeaGreen",
+                    "pos": false
+                },
+                {
+                    "name": "B-point",
+                    "color": "cyan",
+                    "pos": false
+                },
+                {
+                    "name": "Glabella",
+                    "color": "yellow",
+                    "pos": false
+                },
+                {
+                    "name": "Menton",
+                    "color": "magenta",
+                    "pos": false
+                },
+                {
+                    "name": "Porion",
+                    "color": "HotPink1",
+                    "pos": false
+                },
+                {
+                    "name": "Orbitale",
+                    "color": "BlueViolet",
+                    "pos": false
+                },
+                {
+                    "name": "U1-inc",
+                    "color": "burlywood4",
+                    "pos": false
+                },
+                {
+                    "name": "U1-apex",
+                    "color": "OrangeRed",
+                    "pos": false
+                },
+                {
+                    "name": "L1-inc",
+                    "color": "goldenrod",
+                    "pos": false
+                },
+                {
+                    "name": "L1-apex",
+                    "color": "DarkSlateGrey",
+                    "pos": false
+                },
+                {
+                    "name": "U6-mbc",
+                    "color": "MistyRose4",
+                    "pos": false
+                },
+                {
+                    "name": "L6-mbc",
+                    "color": "olive",
+                    "pos": false
+                }
+            ]
+        },
+        "images/TAMARA^_ZAYED_001 (2).jpg": {
+            "active_class": "Orbitale",
+            "classes": [
+                {
+                    "name": "Gonion",
+                    "first_line": false,
+                    "second_line": false,
+                    "third_mouse_click": false,
+                    "bisector": false,
+                    "bisector_draw": false,
+                    "color": "orange",
+                    "gonion_point": false
+                },
+                {
+                    "name": "Sella",
+                    "color": "red",
+                    "pos": {
+                        "x": 619,
+                        "y": 621,
+                        "__point__": true
+                    }
+                },
+                {
+                    "name": "Naison",
+                    "color": "green",
+                    "pos": {
+                        "x": 587,
+                        "y": 194,
+                        "__point__": true
+                    }
+                },
+                {
+                    "name": "A-point",
+                    "color": "SeaGreen",
+                    "pos": {
+                        "x": 716,
+                        "y": 332,
+                        "__point__": true
+                    }
+                },
+                {
+                    "name": "B-point",
+                    "color": "cyan",
+                    "pos": {
+                        "x": 690,
+                        "y": 330,
+                        "__point__": true
+                    }
+                },
+                {
+                    "name": "Glabella",
+                    "color": "yellow",
+                    "pos": {
+                        "x": 310,
+                        "y": 472,
+                        "__point__": true
+                    }
+                },
+                {
+                    "name": "Menton",
+                    "color": "magenta",
+                    "pos": {
+                        "x": 572,
+                        "y": 511,
+                        "__point__": true
+                    }
+                },
+                {
+                    "name": "Porion",
+                    "color": "HotPink1",
+                    "pos": {
+                        "x": 369,
+                        "y": 537,
+                        "__point__": true
+                    }
+                },
+                {
+                    "name": "Orbitale",
+                    "color": "BlueViolet",
+                    "pos": false
+                },
+                {
+                    "name": "U1-inc",
+                    "color": "burlywood4",
+                    "pos": {
+                        "x": 552,
+                        "y": 346,
+                        "__point__": true
+                    }
+                },
+                {
+                    "name": "U1-apex",
+                    "color": "OrangeRed",
+                    "pos": {
+                        "x": 384,
+                        "y": 496,
+                        "__point__": true
+                    }
+                },
+                {
+                    "name": "L1-inc",
+                    "color": "goldenrod",
+                    "pos": {
+                        "x": 451,
+                        "y": 422,
+                        "__point__": true
+                    }
+                },
+                {
+                    "name": "L1-apex",
+                    "color": "DarkSlateGrey",
+                    "pos": {
+                        "x": 356,
+                        "y": 518,
+                        "__point__": true
+                    }
+                },
+                {
+                    "name": "U6-mbc",
+                    "color": "MistyRose4",
+                    "pos": {
+                        "x": 332,
+                        "y": 315,
+                        "__point__": true
+                    }
+                },
+                {
+                    "name": "L6-mbc",
+                    "color": "olive",
+                    "pos": {
+                        "x": 512,
+                        "y": 544,
+                        "__point__": true
+                    }
+                }
+            ]
+        },
+        "images/24399digital ceph.jpg": {
+            "active_class": "Gonion",
+            "classes": [
+                {
+                    "name": "Gonion",
+                    "first_line": [
+                        {
+                            "x": 428,
+                            "y": 635,
+                            "__point__": true
+                        },
+                        {
+                            "x": 250,
+                            "y": 438,
+                            "__point__": true
+                        }
+                    ],
+                    "second_line": [
+                        {
+                            "x": 383,
+                            "y": 288,
+                            "__point__": true
+                        },
+                        {
+                            "x": 315,
+                            "y": 429,
+                            "__point__": true
+                        }
+                    ],
+                    "third_mouse_click": {
+                        "x": 404,
+                        "y": 472,
+                        "__point__": true
+                    },
+                    "bisector": [
+                        42.14690018775994,
+                        293.33325682813955,
+                        -153523.24073841627
+                    ],
+                    "bisector_draw": false,
+                    "color": "orange",
+                    "gonion_point": [
+                        404,
+                        465.3270295312358
+                    ]
+                },
+                {
+                    "name": "Sella",
+                    "color": "red",
+                    "pos": false
+                },
+                {
+                    "name": "Naison",
+                    "color": "green",
+                    "pos": false
+                },
+                {
+                    "name": "A-point",
+                    "color": "SeaGreen",
+                    "pos": false
+                },
+                {
+                    "name": "B-point",
+                    "color": "cyan",
+                    "pos": false
+                },
+                {
+                    "name": "Glabella",
+                    "color": "yellow",
+                    "pos": false
+                },
+                {
+                    "name": "Menton",
+                    "color": "magenta",
+                    "pos": false
+                },
+                {
+                    "name": "Porion",
+                    "color": "HotPink1",
+                    "pos": false
+                },
+                {
+                    "name": "Orbitale",
+                    "color": "BlueViolet",
+                    "pos": false
+                },
+                {
+                    "name": "U1-inc",
+                    "color": "burlywood4",
+                    "pos": false
+                },
+                {
+                    "name": "U1-apex",
+                    "color": "OrangeRed",
+                    "pos": false
+                },
+                {
+                    "name": "L1-inc",
+                    "color": "goldenrod",
+                    "pos": false
+                },
+                {
+                    "name": "L1-apex",
+                    "color": "DarkSlateGrey",
+                    "pos": false
+                },
+                {
+                    "name": "U6-mbc",
+                    "color": "MistyRose4",
+                    "pos": false
+                },
+                {
+                    "name": "L6-mbc",
+                    "color": "olive",
+                    "pos": false
+                }
+            ]
+        }
+    }
 }

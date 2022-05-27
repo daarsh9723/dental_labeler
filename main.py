@@ -29,6 +29,8 @@ class_name_shortcut = {
         "u6":"U6-mbc",#
         "l6":"L6-mbc"
 }
+inv_class_name_shortcut = {v: k for k, v in class_name_shortcut.items()}
+
 class EnhancedJSONEncoder(json.JSONEncoder):
         def default(self, o):
             if dataclasses.is_dataclass(o):
@@ -65,6 +67,7 @@ def reset_state_part():
                 canvas.delete('tmp_bisector_circle')
             state_class= copy.deepcopy(state_default['classes'][i])
             state['classes'][i] = state_class
+    make_table()
 
 def create_circle(canvasName,x, y, r=2,tag = 'circle',color = 'black'): #center coordinates, radius
     x0 = x - r
@@ -93,7 +96,6 @@ class Point:
 def on_button_1_clicked(tk_event):
     global state
     global canvas
-
     # print("Button 1 clicked",tk_event)
     if state['active_class'] == 'Gonion':
         state_gonion = state['classes'][0]
@@ -134,6 +136,8 @@ def on_button_1_clicked(tk_event):
                 create_circle(canvas,tk_event.x,tk_event.y,tag=state_class['name'],color=state_class['color'])
                 state['classes'][state['classes'].index(state_class)] = state_class
                 break
+    make_table()
+    
 
 def create_angle_bisector(canvas):
     global state
@@ -220,43 +224,7 @@ def create_canvas(image):
     for k, v in class_name_shortcut.items():
         root.bind(k, lambda event, name=v: change_class_func(event, name))
 
-    # root.bind("s",change_class_func)
-    # root.bind("n",change_class_func)
-    # root.bind("a",change_class_func)
-    # root.bind("b",change_class_func)
-    # root.bind("ga",change_class_func)
-    # root.bind("go",change_class_func)
-    # root.bind("me",change_class_func)
-    # root.bind("po",change_class_func)
-    # root.bind("or",change_class_func)
-    # root.bind("u1i",change_class_func)
-    # root.bind("u1a",change_class_func)
-    # root.bind("l1i",change_class_func)
-    # root.bind("l1a",change_class_func)
-    # root.bind("u6",change_class_func)
-    # root.bind("l6",change_class_func)
-
     return canvas
-
-# def key_pressed(event):
-#     global state
-#     global label_active_class
-#     if event.char == 'r':
-#         # reset_state_full()
-#         return
-#     if event.char == 'c':
-#         reset_state_part()
-#         return
-#     try:
-#         if int(event.char) in list(range(1,len(state['classes'])+1)):
-#             state['active_class'] = state['classes'][int(event.char)-1]['name']
-#             print(state['active_class'])
-#         label_active_class.config(text=f"Active class: {state['active_class']}")
-#         active_class = [state_class for state_class in state['classes'] if state_class['name'] == state['active_class']][0]
-#         label_active_class.config(fg=active_class['color'])
-#     except ValueError as e:
-#         print(e)
-#     return
 
 def save_state(image_path,current_path):
     global state
@@ -326,8 +294,9 @@ def forward(img_path):
 
     load_state(current_image_path)
     create_forward_button(img_path)
-
     create_back_button(img_path)
+    make_table()
+
 
     active_class = [state_class for state_class in state['classes'] if state_class['name'] == state['active_class']][0]
     label_active_class = Label(root, text=f"Active Class: {state['active_class']}",fg=active_class['color'],background='black')
@@ -372,9 +341,9 @@ def back(img_path):
     canvas = create_canvas(current_image)
     load_state(current_image_path)
     create_forward_button(img_path)
-
     create_back_button(img_path)
-        
+    make_table()
+
     active_class = [state_class for state_class in state['classes'] if state_class['name'] == state['active_class']][0]
     label_active_class = Label(root, text=f"Active Class: {state['active_class']}",fg=active_class['color'],background='black')
 
@@ -432,6 +401,8 @@ def main():
 
     create_forward_button(current_image_path)
     create_back_button(current_image_path)
+    make_table()
+
     button_clear = Button(root, text="Clear", command=reset_state_part)
 
     active_class = [state_class for state_class in state['classes'] if state_class['name'] == state['active_class']][0]
@@ -442,6 +413,21 @@ def main():
     button_forward.grid(row=5, column=2)
     label_active_class.grid(row=5, column=3)
     root.mainloop()
+
+def make_table():
+    global state
+    global root
+    state_char_map = {
+        True:'X',
+        False:'V'
+    }
+    data = [[f"{i['name']} ({inv_class_name_shortcut[i['name']]})",state_char_map[i['pos']==False]] for i in state['classes'] if i['name'] != 'Gonion' ]
+    state_gonion = [i for i in state['classes'] if i['name'] == 'Gonion'][0]
+    data.append([f"Gonion ({inv_class_name_shortcut['Gonion']})" ,state_char_map[state_gonion['gonion_point']==False]])
+
+    t = Table(root,data)
+
+    t.frame1.grid(row=1, column=6)
 
 def create_image_from_path(image):
     pil_im = Image.open(image)
@@ -490,5 +476,22 @@ def redraw_line(line):
         create_circle(canvas,line_event.x,line_event.y)
     if len(line) == 2:
         create_line(canvas, line[0].x, line[0].y, line[1].x, line[1].y)
+
+class Table:
+     
+    def __init__(self,root,lst):
+        self.frame1 = Frame(root, background="black")
+
+        # code for creating table
+        for i in range(len(lst)):
+            for j in range(len(lst[0])):
+                 
+                self.e = Entry(self.frame1, width=15 if j==0 else 3, fg='black',
+                               font=('Arial',16))
+                 
+                self.e.grid(row=i, column=j)
+                self.e.insert(END, lst[i][j])
+
+  
 main()
 
