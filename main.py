@@ -249,6 +249,16 @@ def decode_point(dct):
     else:
         return dct
 
+def update_state_with_new_classes(state):
+    in_class_names = [i['name'] for i in state['classes']]
+    for state_class_name,state_class in state_default_classes_dict.items():
+        if state_class_name not in in_class_names:
+            state['classes'].append(copy.deepcopy(state_class))
+
+    for state_class in state['classes']:
+        state_class['color'] = state_default_classes_dict[state_class['name']]['color']
+    return state
+
 def load_state(image_path):
     global state
     global canvas
@@ -259,6 +269,7 @@ def load_state(image_path):
 
         if image_path in db['data']:
             state = db['data'][image_path]
+            state = update_state_with_new_classes(state) 
             for state_class in state['classes']:
                 if state_class['name'] == 'Gonion':
                     if state_class['first_line'] !=False:
@@ -472,7 +483,7 @@ def make_state_default(class_name_shortcut):
         # }
         ]
     }
-    colors = [ "maroon","darkgreen"'teal','yellowgreen','purple2','red','darkorange','gold','mediumblue','lime','mediumspringgreen','royalblue','aqua','deepskyblue','lightcoral','fuchsia','plum','deeppink','moccasin']
+    colors = [ "maroon","darkgreen",'teal','yellowgreen','purple2','red','darkorange','gold','mediumblue','lime','mediumspringgreen','royalblue','aqua','deepskyblue','lightcoral','fuchsia','plum','deeppink','moccasin']
     c_dict = {k:v for k,v in class_name_shortcut.items() if v!= 'Gonion'}
     for i, (k,v) in enumerate(c_dict.items()):
         state_default['classes'].append({
@@ -480,9 +491,10 @@ def make_state_default(class_name_shortcut):
         'color': colors[i%len(colors)],
         'pos':False
     })
-    return state_default
+    state_default_classes_dict = {i['name']:i for i in state_default['classes']}
+    return state_default,state_default_classes_dict
 
-state_default = make_state_default(class_name_shortcut)
+state_default,state_default_classes_dict = make_state_default(class_name_shortcut)
 
 def redraw_line(line):
     for line_event in line:
