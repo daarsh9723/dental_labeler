@@ -15,8 +15,8 @@ from PIL import ImageTk, Image
 class_name_shortcut = {
         "s": "Sella",
         "n": "Naison",
-        "a":"A-point",
-        "b":"B-point",
+        "ap":"A-point",
+        "bp":"B-point",
         "ga":"Glabella",
         "go":"Gonion",
         "me":"Menton",
@@ -27,7 +27,11 @@ class_name_shortcut = {
         "l1i":"L1-inc",
         "l1a":"L1-apex",
         "u6":"U6-mbc",#
-        "l6":"L6-mbc"
+        "l6":"L6-mbc",
+        "yx":"Y-axis",
+        "gn":"gnathion",
+        "an":"ANS",
+        "pn":"PNS"
 }
 inv_class_name_shortcut = {v: k for k, v in class_name_shortcut.items()}
 
@@ -76,7 +80,7 @@ def create_circle(canvasName,x, y, r=2,tag = 'circle',color = 'black'): #center 
     y1 = y + r
     return canvasName.create_oval(x0, y0, x1, y1,tag = tag,fill = color)
 
-def create_line(canvas,x_1, y_1, x_2, y_2,color='yellow',width=2):
+def create_line(canvas,x_1, y_1, x_2, y_2,color='yellow',width=0.5):
     global canvas_width
     # use equation of a line to extend the line to the end of the canvas, while maintaining the same slope
 
@@ -152,7 +156,7 @@ def create_angle_bisector(canvas):
     y_intercept = -c/y if y!=0 else 1e10
     state_gonion['bisector'] = [x,y,c]
     state_gonion['bisector_draw'] = True
-    create_line(canvas, 0, y_intercept,x_intercept, 0,color='red',width=1)
+    create_line(canvas, 0, y_intercept,x_intercept, 0,color='red',width=0.5)
     state['classes'][0] = state_gonion
 
 def get_line_bisector_params(first_line, second_line,multiplier=1):
@@ -468,7 +472,7 @@ def make_state_default(class_name_shortcut):
         # }
         ]
     }
-    colors = [ "red", "green", "SeaGreen", "cyan", "yellow", "magenta","HotPink1","BlueViolet","burlywood4","OrangeRed","goldenrod","DarkSlateGrey","MistyRose4","olive"]
+    colors = [ "maroon","darkgreen"'teal','yellowgreen','purple2','red','darkorange','gold','mediumblue','lime','mediumspringgreen','royalblue','aqua','deepskyblue','lightcoral','fuchsia','plum','deeppink','moccasin']
     c_dict = {k:v for k,v in class_name_shortcut.items() if v!= 'Gonion'}
     for i, (k,v) in enumerate(c_dict.items()):
         state_default['classes'].append({
