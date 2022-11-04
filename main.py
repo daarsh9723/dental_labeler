@@ -181,6 +181,9 @@ def draw_hover_circle(event):
         event_x, y_pos = get_circle_loc_on_bisector(event, x, y, c)
         canvas.delete('tmp_bisector_circle')
         create_circle(canvas,event_x,y_pos,r=2,tag='tmp_bisector_circle')
+    else:
+        create_circle(canvas,1,1,r=10)
+                
 
 
 def get_circle_loc_on_bisector(event, x, y, c):
@@ -295,7 +298,6 @@ def forward(img_path):
     load_state(current_image_path)
     create_forward_button(img_path)
     create_back_button(img_path)
-    make_table()
 
 
     active_class = [state_class for state_class in state['classes'] if state_class['name'] == state['active_class']][0]
@@ -305,7 +307,7 @@ def forward(img_path):
     button_clear.grid(row=5, column=1)
     button_forward.grid(row=5, column=2)
     label_active_class.grid(row=5, column=3)
-
+    make_table()
 def create_forward_button(img_path):
     global button_forward
     global right_key_func
@@ -342,7 +344,6 @@ def back(img_path):
     load_state(current_image_path)
     create_forward_button(img_path)
     create_back_button(img_path)
-    make_table()
 
     active_class = [state_class for state_class in state['classes'] if state_class['name'] == state['active_class']][0]
     label_active_class = Label(root, text=f"Active Class: {state['active_class']}",fg=active_class['color'],background='black')
@@ -351,6 +352,7 @@ def back(img_path):
     button_clear.grid(row=5, column=1)
     button_forward.grid(row=5, column=2)
     label_active_class.grid(row=5, column=3)
+    make_table()
 
 def create_back_button(img_path):
     global button_back
@@ -382,6 +384,7 @@ def main():
     global right_key_func
 
     img_paths = glob.glob("images/*.jpg")
+    img_paths.extend(glob.glob("images/*.JPG"))
 
     if exists('db.json'):
         with open('db.json', 'r') as f:
@@ -401,7 +404,6 @@ def main():
 
     create_forward_button(current_image_path)
     create_back_button(current_image_path)
-    make_table()
 
     button_clear = Button(root, text="Clear", command=reset_state_part)
 
@@ -412,11 +414,15 @@ def main():
     button_clear.grid(row=5, column=1)
     button_forward.grid(row=5, column=2)
     label_active_class.grid(row=5, column=3)
+    make_table()
+
     root.mainloop()
 
 def make_table():
     global state
     global root
+    global canvas
+
     state_char_map = {
         True:'X',
         False:'V'
@@ -428,7 +434,10 @@ def make_table():
     t = Table(root,data)
 
     t.frame1.grid(row=1, column=6)
-
+    #change_class_func(None,state["active_class"])
+    #root.update()
+    #canvas.focus_set()
+    create_circle(canvas,0,0)
 def create_image_from_path(image):
     pil_im = Image.open(image)
     pil_im = pil_im.resize((MAX_SIZE, MAX_SIZE), Image.ANTIALIAS)
@@ -494,4 +503,3 @@ class Table:
 
   
 main()
-
