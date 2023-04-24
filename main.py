@@ -1,6 +1,7 @@
 
 # importing the tkinter module and PIL
 # that is pillow module
+from cgitb import text
 import copy
 from dataclasses import dataclass
 import dataclasses
@@ -8,39 +9,28 @@ from genericpath import exists
 import glob
 import json
 import math
-from textwrap import indent
+import numpy as np
+from textwrap import fill, indent
 from tkinter import *
 from PIL import ImageTk, Image
 
-class_name_shortcut = {
-        "s": "Sella",
-        "n": "Naison",
-        "ap":"A-point",
-        "bp":"B-point",
-        "ga":"Glabella",
-        "go":"Gonion",
-        "me":"Menton",
-        "po":"Porion",
-        "or":"Orbitale",
-        "u1i":"U1-inc",
-        "u1a":"U1-apex",#
-        "l1i":"L1-inc",
-        "l1a":"L1-apex",
-        "u6":"U6-mbc",#
-        "l6":"L6-mbc",
-        "yx":"Y-axis",
-        "gn":"gnathion",
-        "an":"ANS",
-        "pn":"PNS"
-}
-inv_class_name_shortcut = {v: k for k, v in class_name_shortcut.items()}
 
 class EnhancedJSONEncoder(json.JSONEncoder):
         def default(self, o):
             if dataclasses.is_dataclass(o):
                 return dataclasses.asdict(o)
             return super().default(o)
-            
+
+#verify if qudrant is needed        
+positions_by_quadrants = {
+    "Quadrant 1":[],
+    "Quadrant 2":[],
+    "Quadrant 3":[],
+    "Quadrant 4":[]
+    
+}
+
+
 def reset_state_full():
     global state
     global canvas
@@ -49,8 +39,7 @@ def reset_state_full():
     # delete all the lines
     canvas.delete('line')
     canvas.delete('circle')
-    canvas.delete('bisector_circle')
-    canvas.delete('tmp_bisector_circle')
+
     for state_class in state['classes'][1:]:
         canvas.delete(state_class['name'])
     if label_active_class is not None:
@@ -59,28 +48,36 @@ def reset_state_full():
 def reset_state_part():
     global state
     global canvas
+    global active_lines
+    global active_circle_coordinates
+    global bezier_curve
+    global distance_text
 
-    for i, state_class in enumerate(state['classes']):
-        if state_class['name'] == state['active_class']:
-            if state_class['name'] != 'Gonion':
-                canvas.delete(state_class['name'])
-            else:
-                canvas.delete('line')
-                canvas.delete('circle')
-                canvas.delete('bisector_circle')
-                canvas.delete('tmp_bisector_circle')
-            state_class= copy.deepcopy(state_default['classes'][i])
-            state['classes'][i] = state_class
-    make_table()
+    canvas.delete('line')
+    canvas.delete('circle')
+    canvas.delete('curve')
+    canvas.delete('text')
 
-def create_circle(canvasName,x, y, r=2,tag = 'circle',color = 'black'): #center coordinates, radius
+    active_lines.clear()
+    active_circle_coordinates.clear()
+    bezier_curve.reinitialize()
+    distance_text.delete('1.0', END)
+
+
+def delete_selection():
+    #to-do
+    #if an entity is deleted, the dependent entities should also be deleted
+    #Ex: delete a point, delete the line associated to the point (the second point can remain)
+    return
+
+def create_circle(canvasName,x, y, r=1.5,tag = 'circle',color = 'blue'): #center coordinates, radius
     x0 = x - r
     y0 = y - r
     x1 = x + r
     y1 = y + r
     return canvasName.create_oval(x0, y0, x1, y1,tag = tag,fill = color)
 
-def create_line(canvas,x_1, y_1, x_2, y_2,color='yellow',width=0.5):
+def create_line_across_canvas(canvas,x_1, y_1, x_2, y_2,color='yellow',width=0.5):
     global canvas_width
     # use equation of a line to extend the line to the end of the canvas, while maintaining the same slope
 
@@ -91,83 +88,32 @@ def create_line(canvas,x_1, y_1, x_2, y_2,color='yellow',width=0.5):
     x_start = 0
     y_start = m * x_start + b
     canvas.create_line(x_start, y_start, x_end, y_end,width=width,fill=color,tag='line')
+
+def create_line(canvas, x1, y1, x2, y2, color = "yellow", width = 0.5):
+    return canvas.create_line(x1, y1, x2, y2, width=width, fill=color, tag="line")
+
+
 @dataclass
 class Point:
     x: int
     y: int
     __point__:bool = True
 
-def on_button_1_clicked(tk_event):
-    global state
+def on_button_3_clicked(tk_event):
     global canvas
-    # print("Button 1 clicked",tk_event)
-    if state['active_class'] == 'Gonion':
-        state_gonion = state['classes'][0]
-        if state_gonion['first_line'] == False:
-            state_gonion['first_line'] = [Point(tk_event.x,tk_event.y)]
-            create_circle(canvas,tk_event.x,tk_event.y)
-            print("First line")
-        elif len(state_gonion['first_line']) == 1:
-            create_circle(canvas,tk_event.x,tk_event.y)
-            state_gonion['first_line'] = [state_gonion['first_line'][0], Point(tk_event.x,tk_event.y)]
-            create_line(canvas, state_gonion['first_line'][0].x, state_gonion['first_line'][0].y, tk_event.x, tk_event.y)
-            print("First line")
-        elif state_gonion['second_line'] == False:
-            create_circle(canvas,tk_event.x,tk_event.y)
-            state_gonion['second_line'] = [Point(tk_event.x,tk_event.y)]
-            print("Second line")
-        elif len(state_gonion['second_line']) == 1:
-            create_circle(canvas,tk_event.x,tk_event.y)
-            state_gonion['second_line'] = [state_gonion['second_line'][0], Point(tk_event.x,tk_event.y)]
-            print("Second line")
-            create_line(canvas, state_gonion['second_line'][0].x, state_gonion['second_line'][0].y, tk_event.x, tk_event.y)
-            create_angle_bisector(canvas)
-        elif state_gonion['third_mouse_click'] == False:
-
-            state_gonion['third_mouse_click'] = Point(tk_event.x,tk_event.y)
-            x,y,c =  state_gonion['bisector']
-            x_pos,y_pos = get_circle_loc_on_bisector(tk_event, x, y, c)
-            state_gonion['gonion_point'] = [x_pos,y_pos]
-            create_circle(canvas,x_pos,y_pos,r=2,tag='bisector_circle',color='yellow')
-            state_gonion['bisector_draw'] = False
-            print("Third line")
-        state['classes'][0] = state_gonion
-    else:
-        for state_class in state['classes']:
-            if state_class['name'] == state['active_class']:
-                state_class['pos'] = Point(tk_event.x,tk_event.y)
-                canvas.delete(state_class['name'])
-                create_circle(canvas,tk_event.x,tk_event.y,tag=state_class['name'],color=state_class['color'])
-                state['classes'][state['classes'].index(state_class)] = state_class
-                break
-    make_table()
-    
-
-def create_angle_bisector(canvas):
     global state
-    state_gonion = state['classes'][0]
-    first_line = state_gonion['first_line']
-    second_line = state_gonion['second_line']
-    x, y, c = get_line_bisector_params(first_line, second_line,-1)
-    m = x/y if y != 0 else 1e10
-    if m<0:
-        x, y, c = get_line_bisector_params(first_line, second_line,1)
-    x_intercept = -c/x if x!=0 else 1e10
-    y_intercept = -c/y if y!=0 else 1e10
-    state_gonion['bisector'] = [x,y,c]
-    state_gonion['bisector_draw'] = True
-    create_line(canvas, 0, y_intercept,x_intercept, 0,color='red',width=0.5)
-    state['classes'][0] = state_gonion
+    global active_circle_coordinates
+    global active_lines
 
-def get_line_bisector_params(first_line, second_line,multiplier=1):
-    a1, b1, c1  = get_line_equation(first_line[0].x, first_line[0].y, first_line[1].x, first_line[1].y)
-    a2, b2, c2  = get_line_equation(second_line[0].x, second_line[0].y, second_line[1].x, second_line[1].y)
-    right_term = multiplier*math.sqrt(a1**2 + b1**2)/math.sqrt(a2**2 + b2**2) if math.sqrt(a2**2 + b2**2) != 0 else 1e10*multiplier*math.sqrt(a1**2 + b1**2)
-    x = a1-a2*right_term
-    y = b1-b2*right_term
-    c = c1-c2*right_term
+    if len(active_circle_coordinates) == 0:
+        (create_circle(canvas, tk_event.x, tk_event.y))
+        active_circle_coordinates.append(Point(tk_event.x, tk_event.y))
 
-    return x,y,c
+    else:
+        create_circle(canvas, tk_event.x, tk_event.y)
+        line = canvas.create_line(active_circle_coordinates[0].x, active_circle_coordinates[0].y, tk_event.x, tk_event.y, tag='line', fill='red')
+        active_circle_coordinates.clear()
+        active_lines.append(line)
 
 
 def get_line_equation(x1, y1, x2, y2):
@@ -176,61 +122,96 @@ def get_line_equation(x1, y1, x2, y2):
     c = x2 * y1 - x1 * y2
     return a, b, c
 
-def draw_hover_circle(event):
-    global state
-    global canvas
-    state_gonion = state['classes'][0]
-    if state_gonion['bisector_draw']!=False:
-        x,y,c = state_gonion['bisector']
-        event_x, y_pos = get_circle_loc_on_bisector(event, x, y, c)
-        canvas.delete('tmp_bisector_circle')
-        create_circle(canvas,event_x,y_pos,r=2,tag='tmp_bisector_circle')
-    else:
-        create_circle(canvas,1,1,r=10)
-                
-
-
-def get_circle_loc_on_bisector(event, x, y, c):
-    event_x = event.x
-    y_pos = -(event_x*x + c)/y
-    return event_x,y_pos
 
 def leftKey(event):
     global left_key_func
     if left_key_func != None:
         left_key_func(event)
 
+
 def rightKey(event):
     global right_key_func
     if right_key_func != None:
         right_key_func(event)
 
-def change_class_func(event,name):
-    print(name)
-    global state
-    global label_active_class
 
-    state['active_class'] = name
-    label_active_class.config(text=f"Active class: {state['active_class']}")
-    active_class = [state_class for state_class in state['classes'] if state_class['name'] == name][0]
-    label_active_class.config(fg=active_class['color'])
+class BezierCurve:
+    def __init__(self, canvas):
+        self.canvas = canvas
+        self.points = []
+        self.curve = None
+        self.active_point = None
+
+        self.canvas.bind("<Button-1>", self.on_click)
+        self.canvas.bind("<ButtonRelease-1>", self.on_release)
+
+    def reinitialize(self):
+        self.points = []
+        self.curve = None
+        self.active_point = None
+
+    def on_click(self, event):
+        x, y = event.x, event.y
+        self.points.append((x, y))
+        self.active_point = len(self.points) - 1
+        self.draw_curve()
+
+    def on_release(self, event):
+        self.active_point = None
+
+    def draw_curve(self):
+        if self.curve is not None:
+            self.canvas.delete(self.curve)
+
+        if len(self.points) >= 2:
+            curve_points = []
+            n = len(self.points) - 1
+            for t in np.linspace(0, 1, 100):
+                x, y = 0, 0
+                for i, (px, py) in enumerate(self.points):
+                    b = self.binomial(n, i)
+                    x += b * t**i * (1-t)**(n-i) * px
+                    y += b * t**i * (1-t)**(n-i) * py
+                curve_points.append(x)
+                curve_points.append(y)
+
+            self.curve = self.canvas.create_line(curve_points, fill="red", smooth=True, tag='curve')
+
+        for i, (x, y) in enumerate(self.points):
+            create_circle(self.canvas, x, y)
+            self.canvas.create_text(x+10, y-10, text=f"P{i}", tag='text')
+
+    def binomial(self, n, k):
+        return np.math.factorial(n) // (np.math.factorial(k) * np.math.factorial(n-k))
+    
+    def point(self, t):
+        p = self.points[:]
+        while len(p) > 1:
+            p = [tuple(p[i][j] + t * (p[i+1][j] - p[i][j]) for j in range(2)) for i in range(len(p)-1)]
+        return p[0]
+
+    def length(self, n=100):
+        length = 0
+        prev_point = self.point(0)
+        for i in range(1, n+1):
+            t = i / n
+            point = self.point(t)
+            segment_length = math.sqrt((point[0]-prev_point[0])**2 + (point[1]-prev_point[1])**2)
+            length += segment_length
+            prev_point = point
+        return length
+
 
 def create_canvas(image):
     global root
     canvas = Canvas(root, width=MAX_SIZE, height =MAX_SIZE )
+
     # We have to show the the box so this below line is needed
 
     canvas.create_image(10, 10, anchor=NW, image=image)
     canvas.grid(row=1, column=0, columnspan=4)
-    canvas.bind("<Button-1>", on_button_1_clicked)
-    canvas.bind('<Motion>', draw_hover_circle)
-    canvas.bind('<Enter>', draw_hover_circle) 
-    root.bind('<Left>', leftKey)
-    root.bind('<Right>', rightKey)
-    # root.bind('<Key>', key_pressed)
-    for k, v in class_name_shortcut.items():
-        root.bind(k, lambda event, name=v: change_class_func(event, name))
-
+    canvas.bind("<Button-3>", on_button_3_clicked)
+    
     return canvas
 
 def save_state(image_path,current_path):
@@ -249,15 +230,13 @@ def decode_point(dct):
     else:
         return dct
 
-def update_state_with_new_classes(state):
-    in_class_names = [i['name'] for i in state['classes']]
-    for state_class_name,state_class in state_default_classes_dict.items():
-        if state_class_name not in in_class_names:
-            state['classes'].append(copy.deepcopy(state_class))
+def draw_line(e):
+   x, y = e.x, e.y
+   if canvas.old_coords:
+      x1, y1 = canvas.old_coords
+      canvas.create_line(x, y, x1, y1, width=5)
+   canvas.old_coords = x, y
 
-    for state_class in state['classes']:
-        state_class['color'] = state_default_classes_dict[state_class['name']]['color']
-    return state
 
 def load_state(image_path):
     global state
@@ -295,34 +274,31 @@ def forward(img_path):
     global button_forward
     global button_back
     global button_clear
+    global button_measure_line
     global state
     global img_paths
-    global label_active_class
     global current_image
     global current_image_path
 
     canvas.grid_forget()
 
-    save_state(current_image_path,img_path)
+    # save_state(current_image_path,img_path)
     current_image_path = img_path
 
     current_image = create_image_from_path(img_path)
     current_image_path = img_path
     canvas = create_canvas(current_image)
 
-    load_state(current_image_path)
+    # load_state(current_image_path)
     create_forward_button(img_path)
     create_back_button(img_path)
 
-
-    active_class = [state_class for state_class in state['classes'] if state_class['name'] == state['active_class']][0]
-    label_active_class = Label(root, text=f"Active Class: {state['active_class']}",fg=active_class['color'],background='black')
-
-    button_back.grid(row=5, column=0)
+    button_measure_line.grid(row=5, column=0)
     button_clear.grid(row=5, column=1)
     button_forward.grid(row=5, column=2)
-    label_active_class.grid(row=5, column=3)
-    make_table()
+    button_back.grid(row=5, column=3)
+
+
 def create_forward_button(img_path):
     global button_forward
     global right_key_func
@@ -336,38 +312,32 @@ def create_forward_button(img_path):
         right_key_func = lambda event: forward(img_paths[img_paths.index(img_path)+1])
 
     
-
 def back(img_path):
 
     global canvas
     global button_forward
     global button_back
     global button_clear
-    global label_active_class
     global state
     global img_paths
     global current_image
     global current_image_path
 
     canvas.grid_forget()
-    save_state(current_image_path,img_path)
+    # save_state(current_image_path,img_path)
     current_image_path = img_path
     # for clearing the image for new image to pop up
     current_image = create_image_from_path(img_path)
     current_image_path = img_path
     canvas = create_canvas(current_image)
-    load_state(current_image_path)
     create_forward_button(img_path)
     create_back_button(img_path)
 
-    active_class = [state_class for state_class in state['classes'] if state_class['name'] == state['active_class']][0]
-    label_active_class = Label(root, text=f"Active Class: {state['active_class']}",fg=active_class['color'],background='black')
 
-    button_back.grid(row=5, column=0)
+    button_back.grid(row=5, column=3)
     button_clear.grid(row=5, column=1)
     button_forward.grid(row=5, column=2)
-    label_active_class.grid(row=5, column=3)
-    make_table()
+    # label_active_class.grid(row=5, column=3)
 
 def create_back_button(img_path):
     global button_back
@@ -380,11 +350,47 @@ def create_back_button(img_path):
         button_back = Button(root, text="Back",command=lambda: back(img_paths[img_paths.index(img_path)-1]))
         left_key_func = lambda event: back(img_paths[img_paths.index(img_path)-1])
 
+
+def show_distance(distance, type_of_line):
+    global canvas 
+    global root
+    global distance_text
+
+    distance_text = Text(canvas, width=25, height=5)
+    canvas.create_window((715, 800), window=distance_text)
+
+    distance_text.insert(END, f"Length of {type_of_line}:{distance:.2f}")
+
+    return
+
+
+def measure_distance(x1, y1, x2, y2):
+    return ((x2 - x1) ** 2 + (y2 - y1) ** 2) ** 0.5
+
+
+def measure():
+    global active_lines
+    distance = 0
+    for line in active_lines:
+        x1, y1, x2, y2 = canvas.coords(line)
+        distance += measure_distance(x1, y1, x2, y2)
+    show_distance(distance, "line")
+    return  
+
+def measure_curve():
+    global bezier_curve
+    distance = 0
+    distance = bezier_curve.length()
+    show_distance(distance, 'curve')
+
+
 def main():
     global root
     root = Tk()
-    root.title("Dental Image classifier")
+    root.title("Dental Image Labeller")
     root.geometry("1000x1000")
+
+    global frame
 
     #define the global vars
     global img_paths
@@ -392,14 +398,23 @@ def main():
     global button_forward
     global button_back
     global button_clear
-    global label_active_class
+    global button_measure_line
+    global button_measure_curve
     global current_image
     global current_image_path
     global left_key_func
     global right_key_func
+    global active_circle_coordinates
+    global active_lines
+    global active_curves
+    global bezier_curve
+
+    active_circle_coordinates = []
+    active_lines = []
+    active_curves = []
 
     img_paths = glob.glob("images/*.jpg")
-    img_paths.extend(glob.glob("images/*.JPG"))
+    img_paths.extend(glob.glob("images/*.JPG")) #looks like just a duplicated list
 
     if exists('db.json'):
         with open('db.json', 'r') as f:
@@ -410,28 +425,39 @@ def main():
             "data":{}
         }
         json.dump(db, open('db.json', 'w'),indent=4)
+
     current_image_path = db['current_image'] if db['current_image'] in img_paths else img_paths[0]
     current_image = create_image_from_path(current_image_path)
     canvas = create_canvas(current_image)
-    label_active_class = None
-    load_state(current_image_path)
+    bezier_curve = BezierCurve(canvas)
 
+    # load_state(current_image_path)
 
+   
     create_forward_button(current_image_path)
     create_back_button(current_image_path)
 
+    button_measure_line = Button(root, text="Measure Line", command=measure)
+    button_measure_curve = Button(root, text="Measure Curve", command=measure_curve)
     button_clear = Button(root, text="Clear", command=reset_state_part)
 
-    active_class = [state_class for state_class in state['classes'] if state_class['name'] == state['active_class']][0]
-    label_active_class = Label(root, text=f"Active Class: {state['active_class']}",fg=active_class['color'],background='black')
- 
-    button_back.grid(row=5, column=0)
+    button_measure_line.grid(row=5, column=0)
     button_clear.grid(row=5, column=1)
     button_forward.grid(row=5, column=2)
-    label_active_class.grid(row=5, column=3)
-    make_table()
+    button_back.grid(row=5, column=3)
+    button_measure_curve.grid(row=5, column=4)
 
     root.mainloop()
+
+# def make_state_default():
+#     state_default = {
+#         'classes':[
+#         {
+            
+#         }
+#         ]
+#     }
+#     return
 
 def make_table():
     global state
@@ -443,8 +469,6 @@ def make_table():
         False:'V'
     }
     data = [[f"{i['name']} ({inv_class_name_shortcut[i['name']]})",state_char_map[i['pos']==False]] for i in state['classes'] if i['name'] != 'Gonion' ]
-    state_gonion = [i for i in state['classes'] if i['name'] == 'Gonion'][0]
-    data.append([f"Gonion ({inv_class_name_shortcut['Gonion']})" ,state_char_map[state_gonion['gonion_point']==False]])
 
     t = Table(root,data)
 
@@ -453,6 +477,8 @@ def make_table():
     #root.update()
     #canvas.focus_set()
     create_circle(canvas,0,0)
+
+
 def create_image_from_path(image):
     pil_im = Image.open(image)
     pil_im = pil_im.resize((MAX_SIZE, MAX_SIZE), Image.ANTIALIAS)
@@ -461,46 +487,12 @@ def create_image_from_path(image):
 
 MAX_SIZE = 800
 
-def make_state_default(class_name_shortcut):
-    state_default = {
-    'active_class': 'Gonion',
-    'classes':[
-        {
-            'name': 'Gonion',
-            "first_line": False,
-            "second_line": False,
-            "third_mouse_click": False,
-            "bisector":False,
-            'bisector_draw': False,
-            'color': 'orange',
-            'gonion_point': False,
-        }
-        # ,
-        # {
-        #     'name': 'second_class',
-        #     'color': 'blue', 
-        #     'pos':False
-        # }
-        ]
-    }
-    colors = [ "maroon","darkgreen",'teal','yellowgreen','purple2','red','darkorange','gold','mediumblue','lime','mediumspringgreen','royalblue','aqua','deepskyblue','lightcoral','fuchsia','plum','deeppink','moccasin']
-    c_dict = {k:v for k,v in class_name_shortcut.items() if v!= 'Gonion'}
-    for i, (k,v) in enumerate(c_dict.items()):
-        state_default['classes'].append({
-        'name': v,
-        'color': colors[i%len(colors)],
-        'pos':False
-    })
-    state_default_classes_dict = {i['name']:i for i in state_default['classes']}
-    return state_default,state_default_classes_dict
-
-state_default,state_default_classes_dict = make_state_default(class_name_shortcut)
 
 def redraw_line(line):
     for line_event in line:
         create_circle(canvas,line_event.x,line_event.y)
     if len(line) == 2:
-        create_line(canvas, line[0].x, line[0].y, line[1].x, line[1].y)
+        create_line_across_canvas(canvas, line[0].x, line[0].y, line[1].x, line[1].y)
 
 class Table:
      
